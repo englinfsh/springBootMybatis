@@ -1,0 +1,39 @@
+spring:
+  profiles: online
+  application:
+    name: springBootMybatis
+  dubbo:
+    application:
+      name: springBootMybatis
+    base-package: com.lin.feng.sheng
+    registrys:
+      id: slfZkCoreCenter
+      name: slfZkCoreCenter
+      protocol: zookeeper
+      address: 127.0.0.1:2181
+      client: zkclient
+      timeout: 3000
+    protocol:
+      name: dubbo
+      threadpool: cached
+      threads: 600
+    provider:
+      id: slfCoreProvider
+      group: slfCoreGroup
+      retries: 0
+      timeout: 300000
+    consumer:
+      timeout: 300000
+      check: true
+      retries: 0
+
+
+
+server:
+  port: 10009
+  context-path: /springBootMybatis
+
+redis:
+  hostname: 10.48.172.21
+  port: 6490
+
