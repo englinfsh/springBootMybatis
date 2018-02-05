@@ -272,7 +272,7 @@ public class ExcelReadOrWriteUtil {
 	public  void testMa() {
 		try {
 
-			List<List<String>> oo = readExcel(new File("E:\\mm.xlsx"), "", 0,
+			List<List<String>> oo = readExcel(new File("E:\\mm.xlsx"), "", 1,
 					0, -1);
 			logger.info("\n" + oo);
 
