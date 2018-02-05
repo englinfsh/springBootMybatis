@@ -96,7 +96,6 @@ public class ExcelReadOrWriteUtil {
 					value = cell.toString();
 					linked.add(value.toString());
 				}
-				linked.add(String.valueOf(i+1));
 				list.add(linked);
 			}
 		} catch (Exception e) {
@@ -189,7 +188,6 @@ public class ExcelReadOrWriteUtil {
 					linked.add(value.toString());
 
 				}
-				linked.add(String.valueOf(i+1));
 				list.add(linked);
 			}
 		} catch (Exception e) {
@@ -216,7 +214,7 @@ public class ExcelReadOrWriteUtil {
 		try {
 
 			List<List<String>> oo=  readExcel(new File("E:\\mm.xlsx"),"",0,0,-1);
-			logger.info(oo);
+			logger.info("\n"+oo);
 
 		} catch (Exception e) {
 			e.printStackTrace();
