@@ -22,11 +22,13 @@ import org.apache.poi.poifs.crypt.Decryptor;
 import org.apache.poi.poifs.crypt.EncryptionInfo;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.xssf.usermodel.XSSFCell;
+import org.apache.poi.xssf.usermodel.XSSFCellStyle;
+import org.apache.poi.xssf.usermodel.XSSFDataFormat;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.junit.Test;
-
+@SuppressWarnings("deprecation")
 public class ExcelReadOrWriteUtil {
 
 	private static Logger logger = Logger.getLogger(ExcelReadOrWriteUtil.class);
@@ -59,6 +61,7 @@ public class ExcelReadOrWriteUtil {
 	 * @return
 	 * @throws Exception
 	 */
+
 	private static List<List<String>> read2003Excel(File file, String passwd,
 			int fromRow, int fromColumn, int lastColumn) throws Exception {
 		List<List<String>> list = new LinkedList<List<String>>();
@@ -100,6 +103,7 @@ public class ExcelReadOrWriteUtil {
 						linked.add("");
 						continue;
 					}
+					cell.setCellType(XSSFCell.CELL_TYPE_STRING);
 					value = cell.toString();
 					linked.add(value.toString());
 				}
@@ -160,6 +164,11 @@ public class ExcelReadOrWriteUtil {
 
 			}
 
+			XSSFCellStyle cellStyle = wb.createCellStyle();
+		    XSSFDataFormat format = wb.createDataFormat();
+		    cellStyle.setDataFormat(format.getFormat("@"));
+
+
 			XSSFSheet sheet = wb.getSheetAt(0);// 默认处理第一个表格
 			Object value = null;
 			XSSFRow row = null;
@@ -185,10 +194,19 @@ public class ExcelReadOrWriteUtil {
 				}
 				for (int j = fromColumn; j < lastColumn; j++) {
 					cell = row.getCell(j);
+
+
+
 					if (cell == null) {
 						linked.add("");
 						continue;
 					}
+
+//					CellType cellType = cell.getCellTypeEnum();
+				    cell.setCellType(XSSFCell.CELL_TYPE_STRING);
+				    cell.setCellStyle(cellStyle);//文本格式。
+
+
 					value = cell.toString();
 					if (value == null || "".equals(value)) {
 						value = "";
@@ -219,9 +237,17 @@ public class ExcelReadOrWriteUtil {
 		return list;
 	}
 
-	// 创建sheet
-	public static void createExcel2003Sheet(List<List<Object>> list,
-			String fileRealPath) throws Exception {
+
+
+	/**
+	 *
+	 * @param exportPathFileName
+	 * @param password
+	 * @param list
+	 * @return 文件路径
+	 * @throws Exception
+	 */
+	public static String createExcel2003Sheet(String exportPathFileName,String password ,List<List<Object>> list) throws Exception {
 		HSSFWorkbook workBook = new HSSFWorkbook();
 
 		int totle = list.size();// 获取List集合的size
@@ -230,6 +256,7 @@ public class ExcelReadOrWriteUtil {
 		for (int m = 0; m < page; m++) {
 
 			HSSFSheet sheet = workBook.createSheet();
+			sheet.protectSheet(password);
 			workBook.setSheetName(m, "data" + String.valueOf(m));
 			HSSFHeader header = sheet.getHeader();
 			header.setCenter("sheet");
@@ -257,7 +284,7 @@ public class ExcelReadOrWriteUtil {
 				rowIndex++;
 			}
 
-			FileOutputStream fos = new FileOutputStream(fileRealPath);
+			FileOutputStream fos = new FileOutputStream(exportPathFileName);
 			sheet.setGridsPrinted(true);
 			HSSFFooter footer = sheet.getFooter();
 			footer.setRight("Page " + HSSFFooter.page() + " of "
@@ -266,13 +293,67 @@ public class ExcelReadOrWriteUtil {
 			fos.close();
 			workBook.close();
 		}
+
+		return exportPathFileName;
 	}
+
+
+	/**
+	 *
+	 * @param exportPathFileName
+	 * @param password
+	 * @param dataList
+	 * @return 文件路径
+	 * @throws Exception
+	 */
+	public String  createExcel2007Sheet(String exportPathFileName ,String password, List<List<Object>> dataList) throws Exception {
+
+		if(exportPathFileName.indexOf(".xlsx")<0){
+			exportPathFileName= exportPathFileName+".xlsx";
+		}
+
+	    // 声明一个工作薄
+	    XSSFWorkbook workBook = null;
+	    workBook = new XSSFWorkbook();
+	    // 生成一个表格
+	    XSSFSheet sheet = workBook.createSheet();
+	    workBook.setSheetName(0,"data");
+	    if(password!=null&&!"".equals(password.trim())){
+	    	sheet.protectSheet(password);
+	    }
+
+	    XSSFCellStyle cellStyle = workBook.createCellStyle();
+	    XSSFDataFormat format = workBook.createDataFormat();
+	    cellStyle.setDataFormat(format.getFormat("@"));
+
+	    //插入需导出的数据
+	    for(int i=0;i<dataList.size();i++){
+	        XSSFRow row = sheet.createRow(i);
+	        List<Object> data = dataList.get(i);
+	        for (int j = 0; j < data.size(); j++) {
+	        	XSSFCell cell = row.createCell(j);
+	        	cell.setCellStyle(cellStyle);
+	        	cell.setCellValue(data.get(j)+"");
+			}
+	    }
+	    File  file = new File(exportPathFileName);
+	    //文件输出流
+	    FileOutputStream outStream = new FileOutputStream(file);
+	    workBook.write(outStream);
+	    outStream.flush();
+	    outStream.close();
+	    workBook.close();
+
+	    return exportPathFileName;
+	}
+
+
 
 	@Test
 	public  void testMa() {
 		try {
 
-			List<List<String>> oo = readExcel(new File("E:\\mm.xlsx"), "", 1,
+			List<List<String>> oo = readExcel(new File("E:\\mm.xlsx"), "", 0,
 					0, -1);
 			logger.info("\n" + oo);
 
@@ -284,7 +365,8 @@ public class ExcelReadOrWriteUtil {
 				}
 				ddList.add(obj);
 			}
-			createExcel2003Sheet(ddList, "E:\\mmm.xls");
+			createExcel2003Sheet( "E:\\mmm2003.xls","",ddList);
+			createExcel2007Sheet( "E:\\mmm2007","",ddList);
 
 		} catch (Exception e) {
 			e.printStackTrace();
