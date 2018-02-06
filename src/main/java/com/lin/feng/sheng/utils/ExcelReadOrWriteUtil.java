@@ -103,7 +103,7 @@ public class ExcelReadOrWriteUtil {
 						linked.add("");
 						continue;
 					}
-					cell.setCellType(XSSFCell.CELL_TYPE_STRING);
+					cell.setCellType(XSSFCell.CELL_TYPE_STRING);//设置为文本读取。
 					value = cell.toString();
 					linked.add(value.toString());
 				}
