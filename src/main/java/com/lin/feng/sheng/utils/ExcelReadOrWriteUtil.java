@@ -203,7 +203,7 @@ public class ExcelReadOrWriteUtil {
 					}
 
 //					CellType cellType = cell.getCellTypeEnum();
-				    cell.setCellType(XSSFCell.CELL_TYPE_STRING);
+				    cell.setCellType(XSSFCell.CELL_TYPE_STRING);//设置为文本读取。
 				    cell.setCellStyle(cellStyle);//文本格式。
 
 
