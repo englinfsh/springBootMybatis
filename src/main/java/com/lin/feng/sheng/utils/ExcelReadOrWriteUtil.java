@@ -27,7 +27,7 @@ import org.apache.poi.xssf.usermodel.XSSFDataFormat;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.junit.Test;
+
 @SuppressWarnings("deprecation")
 public class ExcelReadOrWriteUtil {
 
@@ -349,7 +349,7 @@ public class ExcelReadOrWriteUtil {
 
 
 
-	@Test
+	
 	public  void testMa() {
 		try {
 
