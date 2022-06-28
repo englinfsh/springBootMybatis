@@ -24,7 +24,7 @@
 		<spring-boot-starter-redis.version>1.4.7.RELEASE</spring-boot-starter-redis.version>
 		<spring-data-redis.version>2.0.2.RELEASE</spring-data-redis.version>
 		<spring-session-data-redis.version>2.0.0.RELEASE</spring-session-data-redis.version>
-		<org.apache.poi.version>3.17</org.apache.poi.version>
+		<org.apache.poi.version>4.1.1</org.apache.poi.version>
 
 		<java.version>1.8</java.version>
 	</properties>
